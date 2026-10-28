@@ -27,7 +27,7 @@ function SudokuScanner({ setBoard }) {
     }
 
     return (
-        <div className="scanner-buttons">
+        <div className="d-flex flex-column flex-sm-row justify-content-center gap-2">
             <input
                 type="file"
                 accept="image/*"
@@ -43,8 +43,8 @@ function SudokuScanner({ setBoard }) {
                 onChange={getArrayFromImage}
                 style={{ display: 'none' }}
             />
-            <button className="btn btn-sys-upload" onClick={() => fileInputRef.current.click()}>Upload Puzzle Image</button>
-            <button className="btn btn-camera-upload" onClick={() => cameraInputRef.current.click()}>Take Photo of Puzzle</button>
+            <button className="btn btn-sudoku rounded-pill px-4" onClick={() => fileInputRef.current.click()}>Upload Puzzle Image</button>
+            <button className="btn btn-sudoku rounded-pill px-4" onClick={() => cameraInputRef.current.click()}>Take Photo of Puzzle</button>
         </div>
     )
 }

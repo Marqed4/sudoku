@@ -1,7 +1,4 @@
-import BackendExplanationImage from '../src/assets/backgrounds/Backend Warning.png'
-
 import SudokuScanner from './components/SudokuScanner'
-import './components/SudokuScanner.css'
 
 import SudokuBoard from './components/SudokuBoard'
 import './components/SudokuBoard.css'
@@ -9,7 +6,6 @@ import './components/SudokuBoard.css'
 import { useState, useEffect, React } from 'react'
 
 import './App.css'
-import './DirectionsBoard.css'
 
 // < ---- Display ---->
 const emptyBoard = Array(9).fill(null).map(() => Array(9).fill('.'))
@@ -56,12 +52,12 @@ function StatusBadge({ result1, result2, onResult1Expire, onResult2Expire}) {
     return (
         <>
             {result1 !== null && (
-                <div className={`status-badge validity ${result1 ? 'solvable' : 'unsolvable'}`}>
+                <div className={`badge rounded-pill border border-dark status-badge px-3 py-2 ${result1 ? 'solvable' : 'unsolvable'}`}>
                     {result1 ? 'Unadulterated board is solvable' : 'Unadulterated board unsolvable'}
                 </div>
             )}
             {result2 !== null && (
-                <div className={`status-badge validity ${result2 ? 'correct' : 'incorrect'}`}>
+                <div className={`badge rounded-pill border border-dark status-badge px-3 py-2 ${result2 ? 'correct' : 'incorrect'}`}>
                     {result2 ? 'Board Solution Is Correct' : 'Board Solution Is Incorrect'}
                 </div>
             )}
@@ -73,10 +69,15 @@ function StatusBadge({ result1, result2, onResult1Expire, onResult2Expire}) {
 
 // < ---- User Help Functions ---->
 
-function HoverReveal({ img, hovered, onMouseEnter, onMouseLeave }) {
+function HoverReveal({ hovered }) {
     return (
         <>
-            {hovered && <img src={img} className="explanation-img" />}
+            {hovered && (
+                <div className="explanation-text">
+                    <p className="mb-2">This webpage is hosted on a free-tier of https://render.com.</p>
+                    <p className="mb-0">Please wait a minute for the backend to wake up after making a request.</p>
+                </div>
+            )}
         </>
     );
 }
@@ -255,88 +256,88 @@ function App() {
 
     return (
         <>
-            <div className='warning-container'>
-                <div className='btn-experiencing-issue'
-                    onMouseEnter={() => setNetworkingHelpHover(true)}
-                    onMouseLeave={() => setNetworkingHelpHover(false)}>
-                    ⚠️ Experiencing Issues?
+            <div className="container py-3">
+                <div className="warning-container">
+                    <div className="btn btn-sudoku btn-experiencing-issue rounded-pill px-4"
+                        onMouseEnter={() => setNetworkingHelpHover(true)}
+                        onMouseLeave={() => setNetworkingHelpHover(false)}>
+                        ⚠️ Experiencing Issues?
+                    </div>
+
+                    <HoverReveal hovered={NetworkingHelpHover} />
                 </div>
 
-                <HoverReveal
-                    hovered={NetworkingHelpHover}
-                    img={BackendExplanationImage}
-                />
-            </div>
-
-            <div className="app-container">
-                <h1 className="app-title">SUDOKU</h1>
+                <h1 className="app-title text-center my-4">SUDOKU</h1>
 
                 {/* Upload / camera buttons above the board */}
                 <SudokuScanner setBoard={loadPuzzle} />
 
-                <div className="board-layout">
+                <div className="row g-3 align-items-start justify-content-center my-3">
 
-                    {/* Left - how to play */}
-                    <div className="wrd directions-board">
-                        <h2><u>How 2 Play</u>❓</h2>
-                        <div className="divider" />
-                        <p>Upload or take a photo of your Sudoku puzzle.</p>
-                        <p>The board will populate automatically.</p>
-                        <p>Use the buttons below to solve, test, validate, or generate a new puzzle.</p>
+                    {/* Left: how to play */}
+                    <div className="col-12 col-lg-3 order-2 order-lg-1">
+                        <div className="card info-card h-100">
+                            <div className="card-body d-flex flex-column gap-3">
+                                <h2 className="mb-0 text-center"><u>How 2 Play</u>❓</h2>
+                                <hr className="my-0" />
+                                <p className="mb-0">Upload or take a photo of your Sudoku puzzle.</p>
+                                <p className="mb-0">The board will populate automatically.</p>
+                                <p className="mb-0">Use the buttons below to solve, test, validate, or generate a new puzzle.</p>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Center - the board */}
-                    <SudokuBoard board={board ?? emptyBoard} clues={clues} hintCells={hintCells} onCellChange={updateCell} />
+                    {/* Center: the board */}
+                    <div className="col-12 col-lg-auto order-1 order-lg-2 d-flex justify-content-center">
+                        <SudokuBoard board={board ?? emptyBoard} clues={clues} hintCells={hintCells} onCellChange={updateCell} />
+                    </div>
 
-                    {/* Right - tips & tricks */}
-                    <div className="wrd recommendations-board">
-                        <h2><u>Tips & Tricks</u>🫡</h2>
-                        <div className="divider" />
-                        <p>Start with rows, columns, or boxes that have the most clues.</p>
-                        <p>If a number can only go in one cell in a row, it must go there.</p>
-                        <p>Eliminate candidates by scanning each row, column, and 3×3 box.</p>
+                    {/* Right: tips & tricks */}
+                    <div className="col-12 col-lg-3 order-3">
+                        <div className="card info-card h-100">
+                            <div className="card-body d-flex flex-column gap-3">
+                                <h2 className="mb-0 text-center"><u>Tips & Tricks</u>🫡</h2>
+                                <hr className="my-0" />
+                                <p className="mb-0">Start with rows, columns, or boxes that have the most clues.</p>
+                                <p className="mb-0">If a number can only go in one cell in a row, it must go there.</p>
+                                <p className="mb-0">Eliminate candidates by scanning each row, column, and 3×3 box.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                {/* Generate, Ask Solve, Manual Solution, Auto Solve */}
-                <div className="board-actions">
-
-                    {/* left - center hint button/selector w/ numerical dropdown choices */}
-                    <div>
-                        <button className="btn btn-hint" onClick={getHint}>Get Hint💡</button>
-                        <select id="number-select" className="slct btn-number-select" value={hints} onChange={(e) => setHints(Number(e.target.value))}>How many hints?
-                            <option value="1" data-hint="1">Hints: 1</option>
-                            <option value="2" data-hint="2">Hints: 2</option>
-                            <option value="3" data-hint="3">Hints: 3</option>
-                            <option value="4" data-hint="4">Hints: 4</option>
-                            <option value="5" data-hint="5">Hints: 5</option>
+                {/* Hints, generate, validate, manual and auto solve */}
+                <div className="d-flex flex-wrap justify-content-center align-items-center gap-2">
+                    <div className="btn-group">
+                        <button className="btn btn-sudoku rounded-start-pill px-4" onClick={getHint}>Get Hint💡</button>
+                        <select id="number-select" className="form-select form-select-hints rounded-end-pill" value={hints} onChange={(e) => setHints(Number(e.target.value))}>
+                            {[1, 2, 3, 4, 5].map(n => (
+                                <option key={n} value={n}>Hints: {n}</option>
+                            ))}
                         </select>
                     </div>
 
-                    <div className="side-panel side-left">
-                        {/* Generate New Puzzles */}
-                        <button className="btn btn-generate" onClick={generateSudoku}>Generate New Puzzle</button>
-                        {/* Tests if board can be solved */}
-                        <button className="btn btn-validate" onClick={isValid}>Can Be Solved?</button>
-                    </div>
-                    <div className="side-panel side-right">
-                        {/* Tests if user input is correct */}
-                        <button className="btn btn-manual" onClick={testBoardCorrect}>Test My Solution</button>
-                        {/* Once solved, empty/wrong cells are filled in place */}
-                        <button className="btn btn-automatic" onClick={solveSudoku}>Solve For Me</button>
-                    </div>
+                    <button className="btn btn-sudoku btn-sudoku-accent rounded-pill px-4" onClick={generateSudoku}>Generate New Puzzle</button>
+                    <button className="btn btn-sudoku rounded-pill px-4" onClick={isValid}>Can Be Solved?</button>
+                    <button className="btn btn-sudoku btn-sudoku-accent rounded-pill px-4" onClick={testBoardCorrect}>Test My Solution</button>
+                    <button className="btn btn-sudoku rounded-pill px-4" onClick={solveSudoku}>Solve For Me</button>
                 </div>
-                <div className="status-row">
-                    <h2 className="status-badge">
-                    <StatusBadge 
-                    result1={canBeSolved}
-                    result2={correctSolution}
-                    onResult1Expire={() => setCanBeSolved(null)}
-                    onResult2Expire={() => setCorrectSolution(null)}
+
+                <div className="status-row d-flex flex-wrap justify-content-center align-items-center gap-2 mt-3">
+                    <StatusBadge
+                        result1={canBeSolved}
+                        result2={correctSolution}
+                        onResult1Expire={() => setCanBeSolved(null)}
+                        onResult2Expire={() => setCorrectSolution(null)}
                     />
-                    </h2>
                 </div>
             </div>
+
+            <footer className="app-footer text-center">
+                <p className="mb-1">© {new Date().getFullYear()} Numberwump &amp; Sons Puzzle Holdings, LLC (Limited Liability Logic)</p>
+                <p className="mb-1">Proudly synergizing 81 squares since last Tuesday. All rights reserved, except the ones we misplaced.</p>
+                <p className="mb-0">Not affiliated with any real company, number, or your math teacher. Please don't take us seriously.</p>
+            </footer>
         </>
     )
 }

@@ -4,18 +4,19 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-      "dev": "vite --port 2001",
-      "build": "vite build",
-      "lint": "eslint .",
-      "preview": "vite preview",
-      "start:frontend": "vite --port 2001 & open-cli http://localhost:2001",
-      "start:backend": "cd ../backend && python main.py",
-      "NOTE1": "Use start:local for concurrency dev.",
-      "start:local": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
-      "start": "vite preview --port 2002"
+    "dev": "vite --port 2001",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "start:frontend": "vite --port 2001 & open-cli http://localhost:2001",
+    "start:backend": "cd ../backend && python main.py",
+    "NOTE1": "Use start:local for concurrency dev.",
+    "start:local": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start": "vite preview --port 2002"
   },
   "dependencies": {
     "@google/genai": "^1.50.1",
+    "bootstrap": "^5.3.8",
     "concurrently": "^9.2.1",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
