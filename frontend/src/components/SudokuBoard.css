@@ -1,36 +1,48 @@
+/* The board: a small crafted object. Soft frame, layered shadow, tidy tabular numerals. */
 .sudoku-board {
     display: grid;
-    position: relative;
-    left: -5px;
     grid-template-columns: repeat(9, 1fr);
-    border: 2.5px solid #1A1612;
+    border: 2px solid var(--sudoku-ink);
+    border-radius: 14px;
+    overflow: hidden;
     width: min(360px, 92vw);
     height: min(360px, 92vw);
-    background-color: #1A1612;
+    background-color: var(--sudoku-ink);
     box-shadow:
-        0 4px 6px rgba(26, 22, 18, 0.08),
-        0 12px 40px rgba(26, 22, 18, 0.12);
-        /* Margin on top & bottom, left & right*/
+        0 1px 2px rgba(26, 22, 18, 0.12),
+        0 8px 20px rgba(26, 22, 18, 0.14),
+        0 24px 48px rgba(26, 22, 18, 0.1);
+    /* Margin on top & bottom, left & right*/
     margin: 25px auto;
 }
 
 .sudoku-cell {
+    background-image: var(--grain-fine), var(--grain-coarse);
+    background-size: 160px 160px, 200px 200px;
+    background-position: 0 0, 0 0;
     font-family: "Inter", sans-serif;
-    font-size: clamp(0.8rem, 2.5vw, 1rem);
+    font-size: clamp(0.9rem, 3vw, 1.15rem);
     font-weight: 600;
-    color: #1A1612;
-    border: 0.5px solid #C4B99A;
+    font-variant-numeric: tabular-nums;
+    color: var(--sudoku-ink);
+    border: 0.5px solid rgba(154, 140, 117, 0.55);
     aspect-ratio: 1;
-    transition: background-color 0.1s;
+    transition: background-color 0.15s, box-shadow 0.15s;
 
     text-align: center;
     outline: none;
     cursor: text;
-    caret-color: #9A8C75;
+    caret-color: var(--sudoku-accent);
     padding: 0;
     width: 100%;
     box-sizing: border-box;
 }
+
+.sudoku-cell:nth-child(3n + 1) { background-position: 12px 40px, 90px 10px; }
+.sudoku-cell:nth-child(4n + 2) { background-position: 70px 22px, 20px 120px; background-size: 130px 130px, 240px 240px; }
+.sudoku-cell:nth-child(5n + 3) { background-position: 110px 95px, 150px 60px; background-size: 190px 190px, 170px 170px; }
+.sudoku-cell:nth-child(7n + 4) { background-position: 35px 135px, 60px 80px; background-size: 150px 150px, 210px 210px; }
+.sudoku-cell:nth-child(11n + 5) { background-position: 140px 15px, 5px 45px; background-size: 120px 120px, 260px 260px; }
 
 .cell-clue {
     color: #1a56a0;
@@ -38,26 +50,28 @@
 }
 
 .cell-hint {
-  color: red;
-  font-weight: bold;
+    color: var(--sudoku-accent);
+    font-weight: 700;
 }
 
+/* Focused cell glows softly in the accent color instead of just darkening */
 .sudoku-cell:focus {
-    background-color: #E0D9C8;
+    background-color: #FBF6E6;
+    box-shadow: inset 0 0 0 2px var(--sudoku-accent);
 }
 
 .cell-orange {
-    background-color: #F5F2EB;
+    background-color: #F7F3EA;
 }
 
 .cell-white {
-    background-color: #EDE8DC;
+    background-color: #EEE8DA;
 }
 
 .border-right {
-    border-right: 2px solid #1A1612;
+    border-right: 2px solid var(--sudoku-ink);
 }
 
 .border-bottom {
-    border-bottom: 2px solid #1A1612;
+    border-bottom: 2px solid var(--sudoku-ink);
 }
