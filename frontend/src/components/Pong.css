@@ -30,6 +30,20 @@
     box-shadow: 0 24px 60px rgba(26, 22, 18, 0.45);
 }
 
+/* The secret third window: laid out at full size exactly like the main window, then
+   scaled down to 65%. Scaling (instead of narrowing it) keeps the content from being squeezed. */
+.pong-window-small {
+    transform: scale(0.65);
+    transform-origin: center;
+}
+
+/* On phones the text would get tiny, so skip the scaling there. */
+@media (max-width: 700px) {
+    .pong-window-small {
+        transform: none;
+    }
+}
+
 .pong-chrome {
     flex: none;
 }
@@ -50,7 +64,7 @@
     border-radius: 8px 8px 0 0;
     background-color: var(--sudoku-paper);
     color: var(--sudoku-ink);
-    font-size: 0.78rem;
+    font-size: 0.95rem;
     font-weight: 600;
 }
 
@@ -130,13 +144,51 @@
     border-radius: 999px;
     background-color: rgba(26, 22, 18, 0.06);
     color: var(--sudoku-ink-soft);
-    font-size: 0.78rem;
+    font-size: 0.95rem;
 }
 
 .pong-address-text {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+/* ---- Bookmarks bar: folders, like the browser's own ---- */
+
+/* One hairline under the whole toolbar area, not two. */
+.pong-toolbar:has(+ .pong-bookmarks) {
+    border-bottom: 0;
+}
+
+.pong-bookmarks {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px 6px;
+    padding: 2px 10px 6px;
+    border-bottom: 1px solid var(--sudoku-hairline);
+    background-color: var(--sudoku-paper);
+}
+
+.pong-bookmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    color: var(--sudoku-ink);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: default;
+    user-select: none;
+}
+
+.pong-bookmark svg {
+    flex: none;
+    color: var(--sudoku-ink-soft);
 }
 
 /* ---- The "website": the same plaster wall as the page body in App.css ---- */
@@ -163,9 +215,9 @@
 .pong-score {
     display: flex;
     justify-content: space-between;
-    font-size: 0.85rem;
+    font-size: 1.05rem;
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     font-variant-numeric: tabular-nums;
     color: var(--sudoku-ink);
@@ -213,6 +265,29 @@
 
 .pong-ball {
     animation: pop-in 0.15s var(--ease-spring);
+}
+
+/* ---- The secret video page: a 16:9 frame styled like the sudoku board ---- */
+
+.rick-frame {
+    width: min(440px, 92vw);
+    aspect-ratio: 16 / 9;
+    margin: 25px auto;
+    border: 2px solid var(--sudoku-ink);
+    border-radius: 14px;
+    overflow: hidden;
+    background-color: var(--sudoku-ink);
+    box-shadow:
+        0 1px 2px rgba(26, 22, 18, 0.12),
+        0 8px 20px rgba(26, 22, 18, 0.14),
+        0 24px 48px rgba(26, 22, 18, 0.1);
+}
+
+.rick-frame iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

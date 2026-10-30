@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import './Pong.css'
+import MiniBrowser from './MiniBrowser'
+import RickRoll from './RickRoll'
 
 // < ---- Constants ---->
 
@@ -20,8 +22,8 @@ const CLICK_SPEED = 40
 
 const API = import.meta.env.VITE_API_URL
 
-// Shown in the mini browser's address bar, e.g. "http://localhost:2001/pong".
-const SITE_URL = typeof window !== 'undefined' ? `${window.location.origin}/pong` : '/pong'
+// Shown in the mini browser's address bar.
+const SITE_URL = 'pong.marqed.it'
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v))
 
@@ -78,6 +80,11 @@ function PongGame({ onExit }) {
     const [error, setError] = useState(null)
     const [helpHover, setHelpHover] = useState(false)
 
+    // Secret: click the title (or either paddle emoji) 5 times within 2 seconds to open the rickroll window.
+    const [showRick, setShowRick] = useState(false)
+    const showRickRef = useRef(false)  // Lets the key handlers ignore the game while it's open.
+    const iconClicks = useRef([])
+
     // How the ball and computer paddle animate between ticks.
     // ms is how long a tick takes; snap jumps with no animation (new game, new serve).
     const [motion, setMotion] = useState({ ms: TICK_MS, snap: true })
@@ -114,6 +121,27 @@ function PongGame({ onExit }) {
     useEffect(() => {
         startNewGame()
     }, [startNewGame])
+
+    // <---- Secret Rickroll ---->
+
+    const handleSecretClick = () => {
+        const now = Date.now()
+
+        // Keep only the clicks from the last 2 seconds.
+        iconClicks.current = [...iconClicks.current.filter(t => now - t < 2000), now]
+
+        if (iconClicks.current.length >= 5) {
+            iconClicks.current = []
+            setRunning(false) // Pause the game underneath.
+            showRickRef.current = true
+            setShowRick(true)
+        }
+    }
+
+    const closeRick = useCallback(() => {
+        showRickRef.current = false
+        setShowRick(false)
+    }, [])
 
     // <---- Game Logic ---->
 
@@ -249,6 +277,9 @@ function PongGame({ onExit }) {
         }
 
         const onKeyDown = (e) => {
+            // The rickroll window is on top: leave the game alone.
+            if (showRickRef.current) return
+
             if (e.key === 'Escape') {
                 onExit()
                 return
@@ -315,31 +346,20 @@ function PongGame({ onExit }) {
     const needsRestart = Boolean(error || state?.game_over)
 
     return (
-        <div className="pong-overlay" role="dialog" aria-label="Pong">
-            <div className="pong-window">
-
-                {/* Mini browser chrome: tab strip + toolbar. */}
-                <div className="pong-chrome">
-                    <div className="pong-tabstrip">
-                        <div className="pong-tab">
-                            <span className="pong-tab-icon" aria-hidden="true">🏓</span>
-                            <span className="pong-tab-title">Pong</span>
-                            <button className="pong-tab-close" onClick={onExit} aria-label="Close tab" title="Close">×</button>
-                        </div>
-                    </div>
-                    <div className="pong-toolbar">
-                        <button className="pong-nav" onClick={onExit} aria-label="Back to Sudoku" title="Back to Sudoku">←</button>
-                        <button className="pong-nav" disabled aria-label="Forward">→</button>
-                        <button className="pong-nav" onClick={startNewGame} aria-label="New game" title="New game">↻</button>
-                        <div className="pong-address" title={SITE_URL}>
-                            <span className="pong-address-icon" aria-hidden="true">ⓘ</span>
-                            <span className="pong-address-text">{SITE_URL}</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* The "website": same classes, same wall, same footer as the Sudoku page. */}
-                <div className="pong-viewport">
+        <>
+            {/* The "website": same classes, same wall, same footer as the Sudoku page. */}
+            <MiniBrowser
+                icon="🏓"
+                onIconClick={handleSecretClick}
+                tabTitle="Pong"
+                url={SITE_URL}
+                onClose={onExit}
+                onBack={onExit}
+                backLabel="Back to Sudoku"
+                onReload={startNewGame}
+                reloadLabel="New game"
+                bookmarks={['Click', 'The', 'Next', 'Title']}
+            >
                     <div className="container py-3">
 
                         <div className="warning-container">
@@ -373,7 +393,7 @@ function PongGame({ onExit }) {
                                         </linearGradient>
                                     </defs>
                                     <text className="app-subtitle-text" style={{ fill: 'url(#pong-subtitle-shine)' }}>
-                                        <textPath href="#pong-subtitle-curve">back to sudoku</textPath>
+                                        <textPath href="#pong-subtitle-curve">click the title</textPath>
                                     </text>
                                     {/* tiny arrow pointing down at the title */}
                                     <path className="app-subtitle-arrow" d="M120 26 Q128 28 131 36 M127 34 L131 37 L133 31" fill="none" />
@@ -382,7 +402,7 @@ function PongGame({ onExit }) {
 
                             <h1 className="app-title text-center my-0"
                                 style={{ cursor: 'pointer', userSelect: 'none' }}
-                                onClick={onExit}>PONG</h1>
+                                onClick={handleSecretClick}>PONG</h1>
                         </div>
 
                         <div className="row g-3 align-items-start justify-content-center my-3">
@@ -391,7 +411,7 @@ function PongGame({ onExit }) {
                             <div className="col-12 col-lg-3 order-2 order-lg-1">
                                 <div className="card info-card h-100">
                                     <div className="card-body d-flex flex-column gap-3">
-                                        <h2 className="mb-0 text-center"><u>How 2 Play</u>🏓</h2>
+                                        <h2 className="mb-0 text-center"><u>How 2 Play</u><span onClick={handleSecretClick} style={{ cursor: 'pointer', userSelect: 'none' }}>🏓</span></h2>
                                         <hr className="my-0" />
                                         <p className="mb-0">Press Start, then move your paddle with W / S or ↑ / ↓.</p>
                                         <p className="mb-0">Or click any row and the paddle glides there.</p>
@@ -497,9 +517,10 @@ function PongGame({ onExit }) {
                         <p className="mb-1">Proudly bouncing 27 × 27 squares since last Tuesday. All rights reserved, except the ones that hit the wall.</p>
                         <p className="mb-0">Not affiliated with any real company, ball, or your PE teacher. Please don't take us seriously.</p>
                     </footer>
-                </div>
-            </div>
-        </div>
+            </MiniBrowser>
+
+            {showRick && <RickRoll onExit={closeRick} />}
+        </>
     )
 }
 
