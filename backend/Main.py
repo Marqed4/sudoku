@@ -2,12 +2,11 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from PIL import Image
 import traceback
-import json
-import os
 from SudokuSolutions import SudokuSolutions
 from Hints import Hints
-from CreateNewBoard import CreateNewBoard, SudokuGenerator
+from CreateNewBoard import CreateNewBoard
 from ImageToArray import ImageToArray
+from Pong import Pong
 
 # Backend uses 2000
 # Frontend uses 2001
@@ -126,7 +125,8 @@ def get_array_from_image():
         return jsonify({ "error": "No image received" }), 400
     
     file = request.files['image']
-
+    
+    # Try to parse image data complete data pipeline with PIL.
     try:
         image = Image.open(file.stream)
         image.load()
@@ -135,6 +135,42 @@ def get_array_from_image():
     except Exception as e:
         traceback.print_exc()
         return jsonify({ "error": str(e) }), 500
+    
+# <---- Pong (Secret Game) ---->
+ 
+# Create a fresh pong game state.
+@app.route('/api/pong/new_game', methods = ['GET'])
+def pong_new_game():
+    state = Pong.new_game()
+    return jsonify({ "state": state })
+ 
+# Advance pong by one tick.
+# Pass back the "state" from the previous response along with the player's move.
+# Returns the new state plus whether the ball still exists, who hit it last,
+# and whether the player has won.
+@app.route('/api/pong/step', methods = ['POST'])
+def pong_step():
+    data = request.get_json()
+    if data is None:
+        return jsonify({ "error": "No JSON body received" }), 400
+ 
+    state = data.get('state')
+    direction = data.get('direction', 'stay')
+ 
+    if direction not in ('up', 'down', 'stay'):
+        return jsonify({ "error": "direction must be up, down or stay" }), 400
+ 
+    if not Pong.is_valid_state(state):
+        return jsonify({ "error": "Invalid game state" }), 400
+ 
+    result = Pong.step(state, direction)
+    return jsonify({
+        "state": result,
+        "ball_exists": result["ball_exists"],
+        "last_hit": result["last_hit"],
+        "player_won": result["player_won"]
+    })
 
+# Backending with debug options are running on port 2000.
 if __name__ == '__main__':
     app.run(debug=True, port=2000)

@@ -20,7 +20,7 @@
     background-image: var(--grain-fine), var(--grain-coarse);
     background-size: 160px 160px, 200px 200px;
     background-position: 0 0, 0 0;
-    font-family: "Inter", sans-serif;
+    font-family: var(--sudoku-font, "Inter", sans-serif);
     font-size: clamp(0.9rem, 3vw, 1.15rem);
     font-weight: 600;
     font-variant-numeric: tabular-nums;

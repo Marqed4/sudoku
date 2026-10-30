@@ -1,0 +1,296 @@
+@font-face {
+    font-family: "Inter";
+    src: url('./assets/fonts/Inter_24pt-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Inter";
+    src: url('./assets/fonts/Inter_24pt-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Inter";
+    src: url('./assets/fonts/Inter_24pt-SemiBoldItalic.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+}
+
+/* A calmer wall: the wash is heavier so the texture whispers */
+body {
+    background-color: #D6CFC0;
+    background-image:
+        linear-gradient(rgba(240, 233, 217, 0.6), rgba(240, 233, 217, 0.6)),
+        url('./assets/backgrounds/night_PlasterWall.jpg');
+    background-size: cover, cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Title: spaced capitals with a hand-drawn squiggle underneath */
+.app-title {
+    position: relative;
+    display: table;
+    margin-inline: auto;
+    padding-bottom: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    padding-left: 0.3em; /* offsets trailing letter-spacing so it centers optically */
+    font-size: clamp(2rem, 7vw, 3rem);
+    color: var(--sudoku-ink);
+}
+
+/* Wraps title + subtitle so the hint can hug the title's top-left corner */
+.title-wrap {
+    position: relative;
+    display: table;
+    margin-inline: auto;
+}
+
+.app-subtitle {
+    position: absolute;
+    left: -1.2rem;
+    top: -1.9rem;
+    width: 7.5rem;
+    pointer-events: none;
+    transform: rotate(-8deg);
+    transform-origin: bottom right;
+    animation: subtitle-pulse 1.8s ease-in-out infinite,
+               subtitle-shake 4s ease-in-out infinite;
+}
+
+.app-subtitle-svg {
+    display: block;
+    width: 100%;
+    overflow: visible;
+}
+
+.app-subtitle-text {
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.07em;
+    font-weight: 600;
+    fill: url(#subtitle-shine);
+}
+
+.app-subtitle-arrow {
+    stroke: #000;
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Quick silver glow pulse */
+@keyframes subtitle-pulse {
+    0%, 100% { filter: drop-shadow(0 0 1px rgba(192, 192, 192, 0.5)); }
+    50% { filter: drop-shadow(0 0 4px #e6e6e6) drop-shadow(0 0 8px rgba(192, 192, 192, 0.9)); }
+}
+
+/* Mostly still, then a quick nervous jitter */
+@keyframes subtitle-shake {
+    0%, 86%, 100% { translate: 0 0; }
+    88% { translate: -2px 1px; }
+    90% { translate: 2px -1px; }
+    92% { translate: -2px 0; }
+    94% { translate: 2px 1px; }
+    96% { translate: -1px 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-subtitle { animation: none; filter: drop-shadow(0 0 3px #d0d0d0); }
+}
+
+.app-title::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 4.5rem;
+    height: 0.6rem;
+    transform: translateX(-50%);
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 10'%3E%3Cpath d='M2 5 Q9 0 16 5 T30 5 T44 5 T58 5 T70 5' fill='none' stroke='%23C2693F' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* Buttons: hairline pills that lift and tilt a touch, then settle when pressed */
+.btn-sudoku {
+    --bs-btn-color: var(--sudoku-ink);
+    --bs-btn-bg: transparent;
+    --bs-btn-border-color: var(--sudoku-ink);
+    --bs-btn-border-width: 1px;
+    --bs-btn-hover-color: var(--sudoku-paper);
+    --bs-btn-hover-bg: var(--sudoku-ink);
+    --bs-btn-hover-border-color: var(--sudoku-ink);
+    --bs-btn-active-color: var(--sudoku-paper);
+    --bs-btn-active-bg: var(--sudoku-ink);
+    --bs-btn-active-border-color: var(--sudoku-ink);
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: transform 0.25s var(--ease-spring), box-shadow 0.25s ease, background-color 0.15s, color 0.15s;
+}
+
+.btn-sudoku:hover {
+    transform: translateY(-2px) rotate(-1deg);
+    box-shadow: 0 6px 14px rgba(26, 22, 18, 0.18);
+}
+
+.btn-sudoku:active {
+    transform: translateY(0) rotate(0);
+    box-shadow: 0 1px 2px rgba(26, 22, 18, 0.2);
+}
+
+.btn-sudoku:focus-visible {
+    outline: 2px solid var(--sudoku-accent);
+    outline-offset: 3px;
+}
+
+.btn-sudoku:not(.btn-sudoku-accent) {
+    background-image: var(--grain-fine), var(--grain-coarse);
+    background-size: 160px 160px, 200px 200px;
+    background-position: 20px 30px, 100px 60px;
+}
+
+.btn-sudoku:not(.btn-sudoku-accent):nth-child(even) {
+    background-position: 90px 10px, 15px 110px;
+    background-size: 130px 130px, 240px 240px;
+}
+
+.btn-sudoku-accent {
+    --bs-btn-bg: var(--sudoku-accent);
+    --bs-btn-color: var(--sudoku-paper);
+    --bs-btn-border-color: var(--sudoku-accent);
+    --bs-btn-hover-bg: var(--sudoku-ink);
+    --bs-btn-hover-border-color: var(--sudoku-ink);
+}
+
+.form-select-hints {
+    width: auto;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    border: 1px solid var(--sudoku-ink);
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.form-select-hints:focus {
+    border-color: var(--sudoku-accent);
+    box-shadow: 0 0 0 3px rgba(194, 105, 63, 0.25);
+}
+
+/* Help-on-hover note for the backend warning */
+.warning-container {
+    position: relative;
+    display: inline-block;
+}
+
+.btn-experiencing-issue {
+    cursor: help;
+}
+
+.explanation-text {
+    position: absolute;
+    z-index: 1050;
+    top: 100%;
+    left: 0;
+    width: min(300px, 90vw);
+    margin-top: var(--space-1);
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--sudoku-hairline);
+    border-radius: var(--radius-soft);
+    background-color: rgba(240, 233, 217, 0.94);
+    box-shadow: 0 10px 30px rgba(26, 22, 18, 0.15);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    animation: pop-in 0.25s var(--ease-spring);
+}
+
+/* Info cards: open, airy, hairline-edged, with a dotted rule under each heading */
+.info-card {
+    border: 1px solid var(--sudoku-hairline);
+    border-radius: var(--radius-soft);
+    background-color: rgba(240, 233, 217, 0.28);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 8px 24px rgba(26, 22, 18, 0.08);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.info-card .card-body {
+    padding: var(--space-3);
+}
+
+.info-card h2 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.info-card hr {
+    border: 0;
+    border-top: 2px dotted var(--sudoku-accent);
+    opacity: 0.55;
+    width: 3rem;
+    margin-inline: auto !important;
+}
+
+.status-row {
+    min-height: 3rem;
+}
+
+.status-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    animation: pop-in 0.3s var(--ease-spring);
+}
+
+.status-badge.solvable,
+.status-badge.correct {
+    background-color: #D6EDD6 !important;
+    color: #2D6A2D;
+}
+
+.status-badge.unsolvable,
+.status-badge.incorrect {
+    background-color: #F2D6D6 !important;
+    color: #8B2020;
+}
+
+/* Footer: deliberately unserious fine print */
+.app-footer {
+    margin: var(--space-4) auto 0;
+    padding: var(--space-3) var(--space-2) var(--space-4);
+    max-width: 640px;
+    border-top: 1px dotted var(--sudoku-hairline);
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: var(--sudoku-ink-soft);
+}
+
+@keyframes pop-in {
+    from { opacity: 0; transform: translateY(6px) scale(0.94); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn-sudoku,
+    .explanation-text,
+    .status-badge {
+        animation: none;
+        transition: none;
+    }
+
+    .btn-sudoku:hover {
+        transform: none;
+    }
+}

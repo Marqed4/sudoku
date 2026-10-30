@@ -1,7 +1,8 @@
 /* Design tokens: whimsical minimalism with a craftsman's eye for detail.
    Quiet neutrals, one warm accent, a strict 8px rhythm, hairline edges. */
 :root {
-    --bs-body-font-family: "Inter", system-ui, sans-serif;
+    --sudoku-font: "Rules Gothic Condensed", "Inter", system-ui, sans-serif;
+    --bs-body-font-family: var(--sudoku-font);
     --bs-body-color: #1A1612;
     --bs-border-color: #1A1612;
 

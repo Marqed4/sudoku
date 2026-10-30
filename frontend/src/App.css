@@ -1,3 +1,11 @@
+/* Rules Gothic Condensed: not bundled. Uses a locally installed copy, or drop
+   the file in assets/fonts and add a url() source here. */
+@font-face {
+    font-family: "Rules Gothic Condensed";
+    src: local("Rules Gothic Condensed"), local("RulesGothicCondensed");
+    font-weight: 100 900;
+}
+
 @font-face {
     font-family: "Inter";
     src: url('./assets/fonts/Inter_24pt-Regular.ttf') format('truetype');
@@ -43,6 +51,66 @@ body {
     padding-left: 0.3em; /* offsets trailing letter-spacing so it centers optically */
     font-size: clamp(2rem, 7vw, 3rem);
     color: var(--sudoku-ink);
+}
+
+/* Wraps title + subtitle so the hint can hug the title's top-left corner */
+.title-wrap {
+    position: relative;
+    display: table;
+    margin-inline: auto;
+}
+
+.app-subtitle {
+    position: absolute;
+    left: -1.2rem;
+    top: -1.9rem;
+    width: 7.5rem;
+    pointer-events: none;
+    transform: rotate(-8deg);
+    transform-origin: bottom right;
+    animation: subtitle-pulse 1.8s ease-in-out infinite,
+               subtitle-shake 4s ease-in-out infinite;
+}
+
+.app-subtitle-svg {
+    display: block;
+    width: 100%;
+    overflow: visible;
+}
+
+.app-subtitle-text {
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.07em;
+    font-weight: 600;
+    fill: url(#subtitle-shine);
+}
+
+.app-subtitle-arrow {
+    stroke: #000;
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Quick silver glow pulse */
+@keyframes subtitle-pulse {
+    0%, 100% { filter: drop-shadow(0 0 1px rgba(192, 192, 192, 0.5)); }
+    50% { filter: drop-shadow(0 0 4px #e6e6e6) drop-shadow(0 0 8px rgba(192, 192, 192, 0.9)); }
+}
+
+/* Mostly still, then a quick nervous jitter */
+@keyframes subtitle-shake {
+    0%, 86%, 100% { translate: 0 0; }
+    88% { translate: -2px 1px; }
+    90% { translate: 2px -1px; }
+    92% { translate: -2px 0; }
+    94% { translate: 2px 1px; }
+    96% { translate: -1px 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-subtitle { animation: none; filter: drop-shadow(0 0 3px #d0d0d0); }
 }
 
 .app-title::after {

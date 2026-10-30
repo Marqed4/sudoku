@@ -1,0 +1,223 @@
+/* Secret pong: a mini browser window showing "the Pong website".
+   The page inside reuses the Sudoku site's own classes (app-title, info-card, btn-sudoku,
+   status-badge, app-footer, sudoku-cell...) from App.css and SudokuBoard.css, so only the
+   browser frame and the game pieces are styled here. */
+
+.pong-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2);
+    background: rgba(26, 22, 18, 0.55);
+    backdrop-filter: blur(3px);
+    animation: pop-in 0.25s var(--ease-spring);
+}
+
+/* ---- The mini browser ---- */
+
+.pong-window {
+    display: flex;
+    flex-direction: column;
+    width: min(1000px, 100%);
+    max-height: 100%;
+    border: 1px solid rgba(26, 22, 18, 0.7);
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: var(--sudoku-paper);
+    box-shadow: 0 24px 60px rgba(26, 22, 18, 0.45);
+}
+
+.pong-chrome {
+    flex: none;
+}
+
+.pong-tabstrip {
+    display: flex;
+    align-items: flex-end;
+    padding: 6px 8px 0;
+    background-color: var(--sudoku-ink);
+}
+
+.pong-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 200px;
+    padding: 6px 8px 6px 12px;
+    border-radius: 8px 8px 0 0;
+    background-color: var(--sudoku-paper);
+    color: var(--sudoku-ink);
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.pong-tab-icon {
+    font-size: 0.85rem;
+    line-height: 1;
+}
+
+.pong-tab-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pong-tab-close {
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.pong-tab-close:hover {
+    background-color: rgba(26, 22, 18, 0.12);
+}
+
+.pong-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--sudoku-hairline);
+    background-color: var(--sudoku-paper);
+}
+
+.pong-nav {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--sudoku-ink);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.pong-nav:hover:not(:disabled) {
+    background-color: rgba(26, 22, 18, 0.1);
+}
+
+.pong-nav:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.pong-address {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    margin-left: 6px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    background-color: rgba(26, 22, 18, 0.06);
+    color: var(--sudoku-ink-soft);
+    font-size: 0.78rem;
+}
+
+.pong-address-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ---- The "website": the same plaster wall as the page body in App.css ---- */
+
+.pong-viewport {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    background-color: #D6CFC0;
+    background-image:
+        linear-gradient(rgba(240, 233, 217, 0.6), rgba(240, 233, 217, 0.6)),
+        url('../assets/backgrounds/night_PlasterWall.jpg');
+    background-size: cover, cover;
+    background-position: center;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Score line + board, sized and spaced like the sudoku board. */
+.pong-stage {
+    width: min(360px, 92vw);
+    margin: 25px auto;
+}
+
+.pong-score {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+    color: var(--sudoku-ink);
+}
+
+/* The frame comes from .sudoku-board; only the spacing changes. */
+.sudoku-board.pong-board {
+    margin: 8px auto 0;
+}
+
+/* The quiet paper badge for neutral messages ("Press Start"). */
+.pong-badge-neutral {
+    background-color: rgba(240, 233, 217, 0.6) !important;
+    color: var(--sudoku-ink);
+}
+
+/* ---- Game pieces: float above the cells and move with transforms ---- */
+
+.pong-piece {
+    z-index: 1;
+}
+
+.pong-paddle-player,
+.pong-paddle-computer {
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(26, 22, 18, 0.35);
+}
+
+.pong-paddle-player {
+    background-color: var(--sudoku-accent);
+}
+
+.pong-paddle-computer {
+    background-color: var(--sudoku-ink);
+}
+
+/* The ball is a small shaded orb drawn in CSS. */
+.pong-ball-orb {
+    position: absolute;
+    inset: 12%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff 0%, #ffe066 35%, #f59f00 100%);
+    box-shadow: 0 1px 3px rgba(26, 22, 18, 0.4);
+}
+
+.pong-ball {
+    animation: pop-in 0.15s var(--ease-spring);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pong-overlay,
+    .pong-ball {
+        animation: none;
+    }
+}

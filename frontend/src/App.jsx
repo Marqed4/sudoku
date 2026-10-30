@@ -3,7 +3,9 @@ import SudokuScanner from './components/SudokuScanner'
 import SudokuBoard from './components/SudokuBoard'
 import './components/SudokuBoard.css'
 
-import { useState, useEffect, React } from 'react'
+import Pong from './components/Pong'
+
+import { useState, useEffect, useRef, React } from 'react'
 
 import './App.css'
 
@@ -94,6 +96,10 @@ function App() {
     const [hints, setHints] = useState(1)
 
     const [NetworkingHelpHover, setNetworkingHelpHover] = useState(false);
+
+    // Secret pong game. Click the title 5 times within 2 seconds to open it.
+    const [showPong, setShowPong] = useState(false)
+    const titleClicks = useRef([])
     
     // <---- Game Logic ---->
 
@@ -246,6 +252,21 @@ function App() {
         setHintCells(null)
         localStorage.removeItem('sudoku-hint-cells')
     }
+
+    // <---- Secret Pong ---->
+
+    // Open pong after 5 clicks on the title within 2 seconds.
+    const handleTitleClick = () => {
+        const now = Date.now()
+
+        // Keep only the clicks from the last 2 seconds.
+        titleClicks.current = [...titleClicks.current.filter(t => now - t < 2000), now]
+
+        if (titleClicks.current.length >= 5) {
+            titleClicks.current = []
+            setShowPong(true)
+        }
+    }
     
     // Save your work as an image!
     // print(data.is_valid)
@@ -267,7 +288,33 @@ function App() {
                     <HoverReveal hovered={NetworkingHelpHover} />
                 </div>
 
-                <h1 className="app-title text-center my-4">SUDOKU</h1>
+                <div className="title-wrap my-4">
+                    <div className="app-subtitle" aria-hidden="true">
+                        <svg viewBox="-1 -1 140 30" className="app-subtitle-svg">
+                            <defs>
+                                <path id="subtitle-curve" d="M4 30 Q30 4 70 14 T112 24" fill="none" />
+                                {/* black text with a silver glint sweeping across */}
+                                <linearGradient id="subtitle-shine" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="40" y2="0">
+                                    <stop offset="0" stopColor="#000" />
+                                    <stop offset="0.38" stopColor="#000" />
+                                    <stop offset="0.5" stopColor="#f4f4f4" />
+                                    <stop offset="0.62" stopColor="#000" />
+                                    <stop offset="1" stopColor="#000" />
+                                    <animateTransform attributeName="gradientTransform" type="translate" from="-40 0" to="140 0" dur="2.2s" repeatCount="indefinite" />
+                                </linearGradient>
+                            </defs>
+                            <text className="app-subtitle-text">
+                                <textPath href="#subtitle-curve">click the title</textPath>
+                            </text>
+                            {/* tiny arrow pointing down at the title */}
+                            <path className="app-subtitle-arrow" d="M120 26 Q128 28 131 36 M127 34 L131 37 L133 31" fill="none" />
+                        </svg>
+                    </div>
+
+                    <h1 className="app-title text-center my-0"
+                        style={{ cursor: 'pointer', userSelect: 'none' }}
+                        onClick={handleTitleClick}>SUDOKU</h1>
+                </div>
 
                 {/* Upload / camera buttons above the board */}
                 <SudokuScanner setBoard={loadPuzzle} />
@@ -338,6 +385,9 @@ function App() {
                 <p className="mb-1">Proudly synergizing 81 squares since last Tuesday. All rights reserved, except the ones we misplaced.</p>
                 <p className="mb-0">Not affiliated with any real company, number, or your math teacher. Please don't take us seriously.</p>
             </footer>
+
+            {/* Secret pong, opened by clicking the title 5 times */}
+            {showPong && <Pong onExit={() => setShowPong(false)} />}
         </>
     )
 }

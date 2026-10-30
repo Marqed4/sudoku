@@ -46,7 +46,7 @@ function SudokuScanner({ setBoard }) {
             <button className="btn btn-sudoku rounded-pill px-4" onClick={() => fileInputRef.current.click()}>Upload Puzzle Image</button>
             <button className="btn btn-sudoku rounded-pill px-4" onClick={() => cameraInputRef.current.click()}>Take Photo of Puzzle</button>
         </div>
-    )
+    ) 
 }
 
 export default SudokuScanner
