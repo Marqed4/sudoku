@@ -1,5 +1,5 @@
 import { useMemo, useRef } from 'react'
-import { findConflicts, sameUnit } from '../sudokuLogic'
+import { findConflicts, sameUnit } from '../sudokulogic'
 
 // Keys that move the selection, as [row change, column change].
 // Arrow keys, WASD, and vim-style hjkl all work.

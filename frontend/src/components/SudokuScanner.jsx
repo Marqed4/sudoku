@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
 import { request } from '../api'
-import { normalizeBoard } from '../sudokuLogic'
+import { normalizeBoard } from '../sudokulogic'
 
 // onScanned({ board, imageUrl }) receives the recognised grid. It is not loaded
 // straight onto the board: the app shows it in a review dialog first.

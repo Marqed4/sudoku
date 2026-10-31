@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import SudokuBoard from './SudokuBoard'
 import NumberPad from './NumberPad'
-import { findConflicts } from '../sudokuLogic'
+import { findConflicts } from '../sudokulogic'
 
 // Shown after a scan, before the puzzle loads. OCR misreads digits, so the person
 // gets to compare against their photo and fix cells first.

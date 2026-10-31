@@ -20,7 +20,7 @@ import {
     isSolved,
     countDigits,
     formatTime,
-} from './sudokuLogic'
+} from './sudokulogic'
 
 import './App.css'
 import './components/SudokuExtras.css'
