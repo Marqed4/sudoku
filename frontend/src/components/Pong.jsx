@@ -13,7 +13,7 @@ import {
     countdownNumber,
     stepGame,
     ballVisible,
-} from './pongEngine'
+} from './PongEngine'
 
 // < ---- Constants ---->
 
