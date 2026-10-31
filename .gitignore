@@ -32,6 +32,7 @@ backend/HintsTest.py
 backend/ImageToArrayTest.py
 backend/SudokuSolutionsTest.py
 backend/CreateNewBoardTest.py
+backend/REVIEW_GUIDE.md
 
 # Media Creation
 frontend/src/assets/backgrounds/Adobe After Effects Auto-Save

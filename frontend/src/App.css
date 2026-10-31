@@ -302,3 +302,130 @@ body {
         transform: none;
     }
 }
+
+/* Sample-puzzle download under the scanner buttons */
+.sample-link {
+    margin-top: var(--space-1);
+    font-size: 0.8rem;
+    color: var(--sudoku-ink-soft);
+}
+
+.sample-link a {
+    color: var(--sudoku-ink);
+    font-weight: 600;
+    text-decoration-color: var(--sudoku-accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+}
+
+.sample-link a:hover {
+    color: var(--sudoku-accent);
+}
+
+/* Running pencil: crosses the bottom of the page behind the content, then rests off-screen */
+.sprite-runner {
+    position: fixed;
+    left: 0;
+    bottom: 6px;
+    width: 56px;
+    z-index: 5; /* above the page so it can be clicked, below modals */
+    cursor: pointer;
+    user-select: none;
+    animation: sprite-cross 38s linear 4s infinite backwards;
+}
+
+/* Stand still while talking */
+.sprite-runner.is-talking,
+.sprite-runner.is-talking .sprite-body,
+.sprite-runner.is-talking .sprite-leg {
+    animation-play-state: paused;
+}
+
+.sprite-bubble {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-bottom: 6px;
+    padding: 0.4rem 0.8rem;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    text-align: center;
+    pointer-events: none;
+    border: 1px solid var(--sudoku-ink);
+    border-radius: 0.9rem;
+    background-color: var(--sudoku-paper);
+    box-shadow: 0 6px 14px rgba(26, 22, 18, 0.18);
+    animation: sprite-say 0.25s var(--ease-spring);
+}
+
+.sprite-bubble::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    background-color: var(--sudoku-paper);
+    border-right: 1px solid var(--sudoku-ink);
+    border-bottom: 1px solid var(--sudoku-ink);
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.sprite-bubble-ja {
+    display: block;
+    font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", "Noto Sans JP", system-ui, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--sudoku-ink);
+}
+
+.sprite-bubble-en {
+    display: block;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: var(--sudoku-ink-soft);
+}
+
+@keyframes sprite-say {
+    from { opacity: 0; transform: translateX(-50%) translateY(6px) scale(0.94); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+.sprite-body {
+    display: block;
+    width: 100%;
+    overflow: visible;
+    animation: sprite-bob 0.3s ease-in-out infinite alternate;
+}
+
+.sprite-leg line {
+    stroke: var(--sudoku-ink);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+}
+
+.sprite-leg-a { transform-origin: 19px 24px; animation: sprite-stride 0.45s ease-in-out infinite alternate; }
+.sprite-leg-b { transform-origin: 31px 24px; animation: sprite-stride 0.45s ease-in-out infinite alternate-reverse; }
+
+@keyframes sprite-cross {
+    0% { transform: translateX(-80px); }
+    32%, 100% { transform: translateX(calc(100vw + 80px)); }
+}
+
+@keyframes sprite-bob {
+    from { transform: translateY(0); }
+    to { transform: translateY(-2px); }
+}
+
+@keyframes sprite-stride {
+    from { transform: rotate(-35deg); }
+    to { transform: rotate(35deg); }
+}
+
+@media (max-width: 575.98px) {
+    .sprite-runner { width: 42px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sprite-runner { display: none; }
+}

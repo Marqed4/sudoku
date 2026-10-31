@@ -1,5 +1,6 @@
 import SudokuScanner from './components/SudokuScanner'
 import ScanReview from './components/ScanReview'
+import RunningSprite from './components/RunningSprite'
 
 import SudokuBoard from './components/SudokuBoard'
 import NumberPad from './components/NumberPad'
@@ -497,6 +498,7 @@ function App() {
 
     return (
         <>
+            <RunningSprite />
             <div className="container py-3">
                 <div className="warning-container">
                     <div className="btn btn-sudoku btn-experiencing-issue rounded-pill px-4"
@@ -538,6 +540,14 @@ function App() {
 
                 {/* Upload / camera buttons above the board */}
                 <SudokuScanner onScanned={setPendingScan} disabled={Boolean(busy)} />
+
+                {/* A ready-made puzzle image, so visitors can try the scanner without a photo */}
+                <p className="sample-link text-center mb-0">
+                    No puzzle handy?{' '}
+                    <a href={`${import.meta.env.BASE_URL}sample-sudoku.png`} download="sample-sudoku.png">
+                        Download a sample to try the scanner
+                    </a>
+                </p>
 
                 <div className="row g-3 align-items-start justify-content-center my-3">
 

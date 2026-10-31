@@ -1,90 +1,32 @@
-from typing import List
+from typing import List, Optional
+import sudoku_engine as engine
 
-# Board is 2d matrix
+Board = List[List[str]]
+
+
 class SudokuSolutions:
+    """Thin compatibility layer over sudoku_engine so existing routes keep working.
+    Nothing here mutates the board passed in."""
+
     @staticmethod
-    def is_valid_sudoku(board: List[List[str]]) -> bool:
-        
-        # Check rows
-        for row in board:
-            seen = set()
-            for num in row:
-                if num == '.':
-                    continue
-                if num in seen:
-                    return False
-                seen.add(num)
-        
-        # Check columns
-        col = 0
-        while col < 9:
-            seen = set()
-            row = 0
-            while row < 9:
-                num = board[row][col]
-                if num != '.':
-                    if num in seen:
-                        return False
-                    seen.add(num)
-                row += 1
-            col += 1
-        
-        # Check 3x3 boxes
-        box_row = 0
-        while box_row < 3:
-            box_col = 0
-            while box_col < 3:
-                seen = set()
-                i = 0
-                while i < 3:
-                    j = 0
-                    while j < 3:
-                        num = board[box_row * 3 + i][box_col * 3 + j]
-                        if num != '.':
-                            if num in seen:
-                                return False
-                            seen.add(num)
-                        j += 1
-                    i += 1
-                box_col += 1
-            box_row += 1
-        
-        return True
-    
+    def is_valid_sudoku(board: Board) -> bool:
+        """No repeated digit in any row, column or box. Does not prove solvability."""
+        return not engine.has_conflicts(board)
+
     @staticmethod
-    def solve_sudoku(board: List[List[str]]) -> List:
-        
-        # Find next empty cell
-        row = 0
-        while row < 9:
-            col = 0
-            while col < 9:
-                if board[row][col] == '.':
-                    
-                    # Try each number 1-9
-                    num = 1
-                    while num <= 9:
-                        board[row][col] = str(num)
-                        
-                        if SudokuSolutions.is_valid_sudoku(board):
-                            result = SudokuSolutions.solve_sudoku(board)
-                            if result != None:
-                                return result
-                        
-                        board[row][col] = '.'
-                        num += 1
-                    
-                    return None
-                col += 1
-            row += 1
-        
-        return board
-    
+    def is_solvable(board: Board) -> bool:
+        return engine.count_solutions(board, limit=1) == 1
+
     @staticmethod
-    def test_correctness(board: List[List[str]], other_board: List[List[str]]) -> bool:
-        
-        # If any cells are blank, represented by '.' 
-        # user solution is automatically incomplete/wrong.
-        
-        # Comapre solved problem to user input.
-        return board == SudokuSolutions.solve_sudoku(other_board)
+    def solve_sudoku(board: Board) -> Optional[Board]:
+        """Solved copy of the board, or None if unsolvable."""
+        return engine.solve(board)
+
+    @staticmethod
+    def test_correctness(solved_board: Board, current_board: Board) -> bool:
+        """True if current_board is a completed grid equal to the given solution."""
+        try:
+            return engine.parse_board(solved_board) == engine.parse_board(current_board) \
+                and all(engine.parse_board(current_board))
+        except ValueError:
+            return False

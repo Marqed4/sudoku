@@ -7,6 +7,7 @@ from Hints import Hints
 from CreateNewBoard import CreateNewBoard
 from ImageToArray import ImageToArray
 from Pong import Pong
+import sudoku_engine as engine
 
 # Backend uses 2000
 # Frontend uses 2001
@@ -25,6 +26,24 @@ def serve():
 def static_files(path):
     return send_from_directory(app.static_folder, path)
 
+# Pull the board out of a request body, validating shape and values.
+# Pass originalBoard to work from the unadulterated puzzle, board for the current state.
+def board_from_request(data):
+    board = data.get('originalBoard', data.get('board'))
+    if board is None:
+        raise ValueError("No board in request")
+    engine.parse_board(board)  # raises ValueError on bad shape or values
+    return board
+
+@app.errorhandler(ValueError)
+def handle_value_error(e):
+    return jsonify({ "error": str(e) }), 400
+
+# Lightweight liveness check, handy for uptime monitors that keep the free tier awake.
+@app.route('/api/health', methods = ['GET'])
+def health():
+    return jsonify({ "status": "ok" })
+
 # <---- Game Logic ---->
 
 # Determine if puzzle is solvable.
@@ -33,9 +52,10 @@ def is_valid_sudoku():
     data = request.get_json()
     if data is None:
         return jsonify({ "error": "No JSON body received" }), 400
-    board = data['originalBoard']
-    result = SudokuSolutions.is_valid_sudoku(board)
-    return jsonify({ "is_valid": result })
+    board = board_from_request(data)
+    # "is_valid" = no conflicts; "is_solvable" = has a solution.
+    return jsonify({ "is_valid": SudokuSolutions.is_valid_sudoku(board),
+                     "is_solvable": SudokuSolutions.is_solvable(board) })
 
 # Determine solution to puzzle.
 @app.route('/api/solve_sudoku', methods = ['POST'])
@@ -44,16 +64,10 @@ def solve_sudoku():
     if data is None:
         return jsonify({ "error": "No JSON body received" }), 400
     
-    board = []
-    
-    # Pass original board when retrieving unadulturated board
-    # Pass localstate/local storage board when retrieving unadulturated board
-    try:
-        board = data['originalBoard']
-    except KeyError:
-        board = data['board']
-        
+    board = board_from_request(data)
     result = SudokuSolutions.solve_sudoku(board)
+    if result is None:
+        return jsonify({ "error": "The current board is not solvable" }), 422
     return jsonify({ "solved_board": result })
 
 @app.route('/api/get_hint', methods = ['POST'])
@@ -62,29 +76,27 @@ def get_hint():
     if data is None:
         return jsonify({ "error": "No JSON body received" }), 400
     
-    board = []
+    board = board_from_request(data)
     how_many_hints = data.get('hints', 1)
-    
-    # Pass original board when retrieving unadulturated board
-    # Pass localstate/local storage board when retrieving unadulturated board
-    try:
-        board = data['originalBoard']
-    except KeyError:
-        board = data['board']
-        
-    if not SudokuSolutions.is_valid_sudoku(board):
-        return jsonify({ "error": "The current board is not solvable" }), 400
-    
-    # result stores the tujple that is the result of calling get_hint.
-    result = Hints.get_hint(board, how_many_hints)
-    return jsonify({ "board" : result[0], "hint_locations": result[1]})
+    if not isinstance(how_many_hints, int) or not 0 <= how_many_hints <= 81:
+        return jsonify({ "error": "hints must be an integer from 0 to 81" }), 400
+
+    if not SudokuSolutions.is_solvable(board):
+        return jsonify({ "error": "The current board is not solvable" }), 422
+
+    new_board, hint_locations = Hints.get_hint(board, how_many_hints)
+    return jsonify({ "board": new_board, "hint_locations": hint_locations })
 
 # <---- New Game ---->
 
 # Generate random sudoku problem.
+# Optional ?difficulty=easy|medium|hard (graded by solving technique, unique solution).
 @app.route('/api/generate_random_sudoku_puzzle', methods = ['GET'])
 def generate_random_sudoku_puzzle():
-    array = CreateNewBoard.generate_ranodom_sudoku_puzzle()
+    difficulty = request.args.get('difficulty', 'medium')
+    if difficulty not in engine.CLUE_TARGETS:
+        return jsonify({ "error": "difficulty must be easy, medium or hard" }), 400
+    array = CreateNewBoard.generate_random_sudoku_puzzle(difficulty)
     return jsonify({ "array": array })
 
 # <---- Test Functions ---->
@@ -106,8 +118,10 @@ def is_board_state_correct():
     data = request.get_json()
     if data is None:
         return jsonify({ "error": "No JSON body received" }), 400
-    solved_board = data['solved_board']
-    current_board = data['board']
+    solved_board = data.get('solved_board')
+    current_board = data.get('board')
+    if solved_board is None or current_board is None:
+        return jsonify({ "error": "solved_board and board are required" }), 400
     result = SudokuSolutions.test_correctness(solved_board, current_board )
     return jsonify({ "result": result })
 
