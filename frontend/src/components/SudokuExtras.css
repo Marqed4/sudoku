@@ -1,0 +1,171 @@
+/* Styles for the new Sudoku features. Import this AFTER App.css and SudokuBoard.css.
+   Selectors are written as ".sudoku-board .sudoku-cell..." so they win over the originals
+   no matter which stylesheet loads first. */
+
+/* ---- Cells are divs now (they can hold pencil marks), not text inputs ---- */
+
+.sudoku-board .sudoku-cell {
+    display: grid;
+    place-items: center;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Order matters below: peer, then matching digit, then conflict, then the selected cell on top. */
+
+.sudoku-board .sudoku-cell.cell-peer {
+    background-color: #F1E7CD;
+}
+
+.sudoku-board .sudoku-cell.cell-match {
+    background-color: #F2D3BE;
+}
+
+.sudoku-board .sudoku-cell.cell-conflict {
+    background-color: #F4D4D0;
+    color: #B3261E;
+}
+
+.sudoku-board .sudoku-cell.cell-selected {
+    background-color: #FBF6E6;
+    box-shadow: inset 0 0 0 2px var(--sudoku-accent);
+}
+
+/* ---- Pencil marks: a 3x3 grid of tiny digits inside the cell ---- */
+
+.cell-notes {
+    display: grid;
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+    width: 100%;
+    height: 100%;
+    padding: 1px;
+    box-sizing: border-box;
+    font-size: clamp(0.4rem, 1.7vw, 0.6rem);
+    font-weight: 600;
+    line-height: 1;
+    color: var(--sudoku-ink-soft);
+}
+
+.cell-notes > span {
+    display: grid;
+    place-items: center;
+}
+
+.cell-notes > .note-match {
+    color: var(--sudoku-accent);
+    font-weight: 700;
+}
+
+/* ---- Timer and best time, sitting above the board ---- */
+
+.board-meta {
+    display: flex;
+    justify-content: space-between;
+    width: min(360px, 92vw);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    font-variant-numeric: tabular-nums;
+    color: var(--sudoku-ink);
+}
+
+/* ---- Number pad ---- */
+
+.number-pad {
+    display: grid;
+    gap: 6px;
+    width: min(360px, 92vw);
+}
+
+.number-pad-digits {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 4px;
+}
+
+.number-pad-tools {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 6px;
+}
+
+.pad-btn {
+    min-height: 44px;
+    padding: 0 4px;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+}
+
+.number-pad-tools .pad-btn {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+}
+
+.pad-btn.active {
+    background-color: var(--sudoku-ink);
+    color: var(--sudoku-paper);
+}
+
+.pad-btn:disabled {
+    opacity: 0.35;
+}
+
+/* ---- Scan review dialog ---- */
+
+.scan-review-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2100;
+    display: grid;
+    place-items: center;
+    padding: var(--space-2);
+    overflow-y: auto;
+    background: rgba(26, 22, 18, 0.55);
+    backdrop-filter: blur(3px);
+    animation: pop-in 0.25s var(--ease-spring);
+}
+
+.scan-review {
+    width: min(520px, 100%);
+    max-height: 100%;
+    overflow-y: auto;
+    padding: var(--space-3);
+    border: 1px solid var(--sudoku-hairline);
+    border-radius: var(--radius-soft);
+    background-color: var(--sudoku-paper);
+    box-shadow: 0 24px 60px rgba(26, 22, 18, 0.45);
+}
+
+.scan-review h2 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.scan-review p {
+    font-size: 0.9rem;
+}
+
+.scan-review-photo {
+    max-width: 100%;
+    max-height: 140px;
+    border: 1px solid var(--sudoku-hairline);
+    border-radius: 10px;
+}
+
+.scan-review .sudoku-board {
+    margin: 16px auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .scan-review-overlay {
+        animation: none;
+    }
+}

@@ -1,0 +1,63 @@
+/* Styles for the new Pong features. Import after Pong.css. */
+
+/* 3, 2, 1 before each serve, and the "Paused" label. Sits on top of the board. */
+.pong-countdown {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    font-size: clamp(3rem, 18vw, 5.5rem);
+    font-weight: 600;
+    color: var(--sudoku-ink);
+    text-shadow: 0 2px 0 rgba(245, 242, 235, 0.8), 0 0 18px rgba(245, 242, 235, 0.9);
+    animation: pop-in 0.3s var(--ease-spring);
+}
+
+.pong-countdown.pong-paused {
+    font-size: clamp(1.6rem, 8vw, 2.4rem);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background-color: rgba(245, 242, 235, 0.55);
+    animation: none;
+}
+
+.pong-best {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sudoku-ink-soft);
+}
+
+/* Hold-to-move buttons: only shown on touch screens. */
+.pong-touch-controls {
+    display: none;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+}
+
+@media (pointer: coarse) {
+    .pong-touch-controls {
+        display: flex;
+    }
+}
+
+.pong-hold-btn {
+    width: 84px;
+    height: 48px;
+    padding: 0;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pong-countdown {
+        animation: none;
+    }
+}
