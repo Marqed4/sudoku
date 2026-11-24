@@ -10,7 +10,7 @@ import Pong from './components/Pong'
 
 import { useState, useEffect, useRef, useMemo } from 'react'
 
-import { request, wakeBackend } from './Api'
+import { request, wakeBackend } from './api'
 import {
     emptyBoard,
     emptyNotes,
@@ -20,7 +20,7 @@ import {
     isSolved,
     countDigits,
     formatTime,
-} from './SudokuLogic'
+} from './sudokulogic'
 
 import './App.css'
 import './components/SudokuExtras.css'
